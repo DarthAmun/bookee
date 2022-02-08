@@ -14,7 +14,7 @@ import {
 import { FaFileExport } from "react-icons/fa";
 import { FileType } from "rsuite/esm/Uploader/Uploader";
 import { usePapaParse, useCSVDownloader } from "react-papaparse";
-import { scanImportedJson } from "../services/CsvService";
+import { scanImportedJson, updateListsWith } from "../services/CsvService";
 import { reciveAll } from "../services/DatabaseService";
 import BookeeEntry from "../types/BookeeEntry";
 import BookeeMod from "../types/BookeeMod";
@@ -30,7 +30,6 @@ function Settings() {
   const [files, setFiles] = useState<FileType[]>([]);
 
   const formatNumber = (num: number): string => {
-    console.log((num / 100).toLocaleString());
     return (
       (num / 100).toLocaleString().replaceAll(",", "").replaceAll(".", ",") +
       "€"
@@ -51,7 +50,7 @@ function Settings() {
       newPTwo = "second";
     }
 
-    reciveAll("entries", (results: any[]) => {
+    reciveAll((results: any[]) => {
       let newBackup: any[] = [];
       results.forEach((result: any) => {
         const res: BookeeEntry = result as BookeeEntry;
@@ -75,7 +74,7 @@ function Settings() {
     });
   }, []);
 
-  const handleUpload = (file: FileType) => {
+  const handleCsvUpload = (file: FileType) => {
     if (file.blobFile) {
       let fileReader = new FileReader();
       fileReader.onloadend = function () {
@@ -87,6 +86,27 @@ function Settings() {
               console.log("Csv loaded from " + file.name);
               const csv: Array<any> = results.data;
               scanImportedJson(csv);
+              console.log("---------");
+            },
+          });
+        }
+      };
+      fileReader.readAsText(file.blobFile);
+    }
+  };
+
+  const handleJsonUpload = (file: FileType) => {
+    if (file.blobFile) {
+      let fileReader = new FileReader();
+      fileReader.onloadend = function () {
+        const content = fileReader.result;
+        if (content !== null) {
+          readString(content.toString(), {
+            worker: true,
+            complete: (results) => {
+              console.log("Json loaded from " + file.name);
+              let entryJson: BookeeEntry[] = JSON.parse(content.toString());
+              updateListsWith(entryJson);
               console.log("---------");
             },
           });
@@ -117,7 +137,8 @@ function Settings() {
       "JsonBackup_" +
       new Date().getFullYear() +
       "." +
-      (new Date().getMonth() + 1);
+      (new Date().getMonth() + 1) +
+      ".json";
     a.href = "data:" + contentType + "," + encodeURIComponent(jsonBackup);
     a.target = "_blank";
     document.body.appendChild(a);
@@ -150,10 +171,29 @@ function Settings() {
             draggable
             multiple
             autoUpload
-            onUpload={handleUpload}
+            onUpload={handleCsvUpload}
             onSuccess={handleSuccess}
             onChange={setFiles}
             accept={".csv"}
+          >
+            <div style={{ lineHeight: "100px" }}>
+              Click or Drag files to this area to upload
+            </div>
+          </Uploader>
+        </Panel>
+      </FlexboxGrid.Item>
+      <FlexboxGrid.Item as={Col} colspan={24} md={12}>
+        <Panel header="Import Json">
+          <Uploader
+            fileList={files}
+            action={"//jsonplaceholder.typicode.com/posts/"}
+            draggable
+            multiple
+            autoUpload
+            onUpload={handleJsonUpload}
+            onSuccess={handleSuccess}
+            onChange={setFiles}
+            accept={".json"}
           >
             <div style={{ lineHeight: "100px" }}>
               Click or Drag files to this area to upload

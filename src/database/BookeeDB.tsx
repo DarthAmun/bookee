@@ -6,8 +6,8 @@ export class BookeeDB extends Dexie {
 
   constructor() {
     super("BookeeDB");
-    this.version(1).stores({
-      entries: "++id, pOne, pTwo, dateDay,dateMonth,dateYear, mods",
+    this.version(2).stores({
+      entries: "++id, [dateDay+dateMonth+dateYear], pOne, pTwo, dateDay,dateMonth,dateYear, mods",
     });
 
     this.entries = this.table("entries");

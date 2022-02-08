@@ -67,7 +67,7 @@ function Dashboard() {
 
   const loadData = () => {
     console.log("Pull entries");
-    reciveAll("entries", (results: any[]) => {
+    reciveAll((results: any[]) => {
       setEntities(results);
     });
     reciveYears((results: any[]) => {

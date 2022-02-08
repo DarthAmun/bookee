@@ -3,7 +3,12 @@ import BookeeEntry, {
   makeBookeeEntryFromRow,
 } from "../types/BookeeEntry";
 import { isBookeeModEntry, makeBookeeModFromRow } from "../types/BookeeMod";
-import { saveNewFromList } from "./DatabaseService";
+import {
+  reciveByAttributes,
+  saveNew,
+  saveNewFromList,
+  update,
+} from "./DatabaseService";
 
 export const scanImportedJson = (csv: Array<any>) => {
   let listOfBookeeEntries: Array<BookeeEntry> = [];
@@ -39,4 +44,19 @@ export const parseRowEntry = (entry: string): number => {
   return parseInt(
     entry.replaceAll("€", "").trim().replaceAll(".", "").replaceAll(",", "")
   );
+};
+
+export const updateListsWith = (bookeeEntryJson: BookeeEntry[]) => {
+  bookeeEntryJson.forEach((entry: BookeeEntry) => {
+    reciveByAttributes(
+      "[dateDay+dateMonth+dateYear]",
+      [[entry.dateDay, entry.dateMonth, entry.dateYear]],
+      (data: unknown) => {
+        if (data === undefined) {
+          console.log(`New Entry on ${entry.dateDay, entry.dateMonth, entry.dateYear} will be saved.`);
+          saveNew(entry);
+        }
+      }
+    );
+  });
 };

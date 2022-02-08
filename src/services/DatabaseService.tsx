@@ -21,17 +21,37 @@ export const saveNewFromList = (tableName: string, entities: BookeeEntry[]) => {
 };
 
 export const reciveAll = (
-  tableName: string,
   callback: (data: IndexableType[]) => void
 ) => {
   const db = new BookeeDB();
   db.open()
     .then(function () {
-      db.table(tableName)
+      db.table("entries")
         .orderBy("dateYear")
         .toArray()
         .then((array) => {
           callback(array);
+        });
+    })
+    .finally(function () {
+      db.close();
+    });
+};
+
+export const reciveByAttributes = (
+  name: string,
+  value: number[][],
+  callback: (data: IndexableType) => void
+) => {
+  const db = new BookeeDB();
+  db.open()
+    .then(function () {
+      db.table("entries")
+        .where(name)
+        .anyOf(value)
+        .toArray()
+        .then((array) => {
+          callback(array[0]);
         });
     })
     .finally(function () {
