@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/bookee/static/css/main.76aa9e5b.css",
-    "main.js": "/bookee/static/js/main.80b43415.js",
+    "main.js": "/bookee/static/js/main.3c11435e.js",
     "service-worker.js": "/bookee/service-worker.js",
     "static/media/bucher.png": "/bookee/static/media/bucher.c7bd921e34735630cb55.png",
     "index.html": "/bookee/index.html",
     "main.76aa9e5b.css.map": "/bookee/static/css/main.76aa9e5b.css.map",
-    "main.80b43415.js.map": "/bookee/static/js/main.80b43415.js.map"
+    "main.3c11435e.js.map": "/bookee/static/js/main.3c11435e.js.map"
   },
   "entrypoints": [
     "static/css/main.76aa9e5b.css",
-    "static/js/main.80b43415.js"
+    "static/js/main.3c11435e.js"
   ]
 }
